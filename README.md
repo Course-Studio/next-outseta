@@ -1,36 +1,26 @@
-This is a [Next.js](https://nextjs.org/) project bootstrapped with [`create-next-app`](https://github.com/vercel/next.js/tree/canary/packages/create-next-app).
+# A NEXT.js implementation with Outseta
+
+This is an experimental project where we use Outseta on a NEXT.js project. NEXT.js has some caveats as it's an SSR based system. We're also utilising the new APP router from NEXT.js. I've managed to solve the majority of the caveats, but we're still running into a few fringe cases.
 
 ## Getting Started
 
-First, run the development server:
+We've got 4 basic routes on this demo:
 
-```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
-```
+- Home: just the standard route with the header
+- Login: This contains a the `<Login />` component that has the Outseta login embed.
+- Register: This contains a the `<Register />` component that has the Outseta register embed.
+- Profile: This contains a the `<Profile />` component that has the Outseta profile embed.
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+## Sessions
 
-You can start editing the page by modifying `app/page.js`. The page auto-updates as you edit the file.
+We tried getting it to work with [NextAuth](https://next-auth.js.org/), but could not get it working due to lack of support. This might need a custom adapter. We're instead building our own basic session manager.
 
-This project uses [`next/font`](https://nextjs.org/docs/basic-features/font-optimization) to automatically optimize and load Inter, a custom Google Font.
+We grab the token in the login callback, verify the token, and then set a session cookie (`api/auth/login/route.js`). In our `middleware.js`, we check that cookie and protect the `/profile` route.
 
-## Learn More
+# Issues
 
-To learn more about Next.js, take a look at the following resources:
+There are a few issues that popped up with this implementation:
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
-
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js/) - your feedback and contributions are welcome!
-
-## Deploy on Vercel
-
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
-
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/deployment) for more details.
+- The _Profile_ embed sometimes do not display the contents. We can see that it has been processed. We think it's because it's not getting the access token properly. You can view how we handle it on the component (`components/Outseta/profile.jsx`).
+- How can we do a logout link?
+- What's the correct way to handle the session? Should this all be handled by the `Outseta.min.js` script? And how can that integrate with NEXT.js?
