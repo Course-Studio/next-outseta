@@ -1,27 +1,18 @@
 "use client";
 
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 
 export default function Register() {
+  const [authCallbackUrl, setAuthCallbackUrl] = useState("");
   useEffect(() => {
-    window.outseta_register = {
-      id: "outseta_r",
-      domain: "mavericks-unlimited.outseta.com",
-      load: "auth",
-      auth: {
-        widgetMode: "register",
-        planFamilyUid: "DmwAv394",
-        planPaymentTerm: "month",
-        skipPlanOptions: true,
-        id: "signup_embed",
-        mode: "embed",
-        selector: "#o-register-form",
-      },
-    };
-    const script = document.createElement("script");
-    script.src = "https://cdn.outseta.com/outseta.min.js";
-    script.dataset.options = "outseta_register";
-    document.body.appendChild(script);
+    setAuthCallbackUrl(window.location.origin + "/api/auth/login");
   }, []);
-  return <div id="o-register-form"></div>;
+
+  return (
+    <div
+      className="o-auth-embed"
+      data-widget-mode="register"
+      data-authenticationcallbackurl={authCallbackUrl}
+    ></div>
+  );
 }
